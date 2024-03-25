@@ -11,6 +11,14 @@ MAGENTA = (255,0,255)
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7
+SQUARESIZE = 100
+width = COLUMN_COUNT * SQUARESIZE
+height = (ROW_COUNT+1) * SQUARESIZE
+RADIUS = int(SQUARESIZE/2 - 5)
+size = (width, height)
+pygame.init()
+myfont = pygame.font.SysFont("applechancery", 70)
+screen = pygame.display.set_mode(size)
 
 def createBoard():
 	board = np.zeros((ROW_COUNT,COLUMN_COUNT))
@@ -74,16 +82,16 @@ def drawBoard(board):
 				pygame.draw.circle(screen, GREEN, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
 			elif board[r][c] == 2: 
 				pygame.draw.circle(screen, MAGENTA, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
-	
 	pygame.display.update()
 
-def mainMenu(): #Fill in
+def mainMenu():
 	while True:
-		screen.blit(background, (-100, 0))
+		background = pygame.image.load("imageAssets/background.png")
+		screen.blit(background, (0, 0))
 		MENU_MOUSE_POS = pygame.mouse.get_pos()
 
 		label = myfont.render("Connect Four", 1, MAGENTA)
-		screen.blit(label, (40,10))
+		screen.blit(label, (150,70))
 	
 		TWO_PLAYERS_BUTTON = Button(image=pygame.image.load("imageAssets/2players.png"), pos =(350, 350))
         
@@ -94,109 +102,85 @@ def mainMenu(): #Fill in
 		for button in [TWO_PLAYERS_BUTTON, PLAY_AI_BUTTON, QUIT_BUTTON]:
 			button.update(screen)
 
-		pygame.time.wait(2000)
-		return 0
-	#Connect 4 header
-	#2 buttons, one "1 player", second "2 player"
-	#one small quit button
-	#if chosen 1-player button:
-		#begin ai game
-	#if chosen 2-player button:
-		#begin 2-player game
-	#if chosen quit button
-		#pygame.time.wait(3000)
-	
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+				
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if TWO_PLAYERS_BUTTON.checkForInput(MENU_MOUSE_POS):
+					twoPlayers()
+				if PLAY_AI_BUTTON.checkForInput(MENU_MOUSE_POS):
+					playAI()
+				if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+					pygame.quit()
+					sys.exit()
+		pygame.display.update()
 
 def twoPlayers():
-	while True:
-		# call function to play normal game
-		return 0
+	board = createBoard()
+	printBoard(board)
+	gameOver = False
+	turn = 0
+	drawBoard(board)
+	pygame.display.update()
 
+	while not gameOver:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit()
+
+			if event.type == pygame.MOUSEMOTION:
+				pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+				posx = event.pos[0]
+				if turn == 0:
+					pygame.draw.circle(screen, GREEN, (posx, int(SQUARESIZE/2)), RADIUS)
+				else: 
+					pygame.draw.circle(screen, MAGENTA, (posx, int(SQUARESIZE/2)), RADIUS)
+			pygame.display.update()
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+				
+				if turn == 0: # Get player 1 Input
+					posx = event.pos[0]
+					col = int(math.floor(posx/SQUARESIZE))
+
+					if isValidLocation(board, col):
+						row = getNextOpenRow(board, col)
+						placePiece(board, row, col, 1)
+
+						if isWinningMove(board, 1):
+							label = myfont.render("Player 1 wins!", 1, GREEN)
+							screen.blit(label, (200,10))
+							gameOver = True
+
+				else:	# Get player 2 Input
+					posx = event.pos[0]
+					col = int(math.floor(posx/SQUARESIZE))
+
+					if isValidLocation(board, col):
+						row = getNextOpenRow(board, col)
+						placePiece(board, row, col, 2)
+
+						if isWinningMove(board, 2):
+							label = myfont.render("Player 2 wins!", 1, MAGENTA)
+							screen.blit(label, (40,10))
+							gameOver = True
+
+				printBoard(board)
+				drawBoard(board)
+
+				turn += 1
+				turn = turn % 2
+
+				if gameOver:
+					pygame.time.wait(4000)
+					mainMenu()
+					
 def playAI():
 	while True:
 		# call function to play AI game
 		return 0
 
-
-# pygame.init()
-board = createBoard()
-printBoard(board)
-gameOver = False
-turn = 0
-
-pygame.init()
-
-SQUARESIZE = 100
-
-width = COLUMN_COUNT * SQUARESIZE
-height = (ROW_COUNT+1) * SQUARESIZE
-
-size = (width, height)
-
-RADIUS = int(SQUARESIZE/2 - 5)
-
-screen = pygame.display.set_mode(size)
-drawBoard(board)
-pygame.display.update()
-
-background = pygame.image.load("imageAssets/background.png")
-
-myfont = pygame.font.SysFont("applechancery", 50)
-
 mainMenu()
-
-while not gameOver:
-
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			sys.exit()
-
-		if event.type == pygame.MOUSEMOTION:
-			pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
-			posx = event.pos[0]
-			if turn == 0:
-				pygame.draw.circle(screen, GREEN, (posx, int(SQUARESIZE/2)), RADIUS)
-			else: 
-				pygame.draw.circle(screen, MAGENTA, (posx, int(SQUARESIZE/2)), RADIUS)
-		pygame.display.update()
-
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
-			
-			# Get player 1 Input
-			if turn == 0:
-				posx = event.pos[0]
-				col = int(math.floor(posx/SQUARESIZE))
-
-				if isValidLocation(board, col):
-					row = getNextOpenRow(board, col)
-					placePiece(board, row, col, 1)
-
-					if isWinningMove(board, 1):
-						label = myfont.render("Player 1 wins!", 1, GREEN)
-						screen.blit(label, (200,10))
-						gameOver = True
-
-			# Get player 2 Input
-			else:				
-				posx = event.pos[0]
-				col = int(math.floor(posx/SQUARESIZE))
-
-				if isValidLocation(board, col):
-					row = getNextOpenRow(board, col)
-					placePiece(board, row, col, 2)
-
-					if isWinningMove(board, 2):
-						label = myfont.render("Player 2 wins!", 1, MAGENTA)
-						screen.blit(label, (40,10))
-						gameOver = True
-
-			printBoard(board)
-			drawBoard(board)
-
-			turn += 1
-			turn = turn % 2
-
-			if gameOver:
-				#mainMenu
-				pygame.time.wait(3000)
