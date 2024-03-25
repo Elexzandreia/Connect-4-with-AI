@@ -76,7 +76,7 @@ def drawBoard(board):
 	
 	pygame.display.update()
 
-def mainMenu():
+def mainMenu(): #Fill in
 	#Connect 4 header
 	#2 buttons, one "1 player", second "2 player"
 	#one small quit button
@@ -86,6 +86,14 @@ def mainMenu():
 		#begin 2-player game
 	#if chosen quit button
 		#pygame.time.wait(3000)
+	return 0
+
+def twoPlayers():
+	#fill in
+	return 0
+
+def playAI():
+	#fill in
 	return 0
 
 
