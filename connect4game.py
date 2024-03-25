@@ -18,6 +18,7 @@ RADIUS = int(SQUARESIZE/2 - 5)
 size = (width, height)
 pygame.init()
 myfont = pygame.font.SysFont("applechancery", 70)
+playerWinsFont = pygame.font.SysFont("applechancery", 50)
 screen = pygame.display.set_mode(size)
 
 def createBoard():
@@ -106,7 +107,7 @@ def mainMenu():
 			if event.type == pygame.QUIT:
 				pygame.quit()
 				sys.exit()
-				
+
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				if TWO_PLAYERS_BUTTON.checkForInput(MENU_MOUSE_POS):
 					twoPlayers()
@@ -151,7 +152,7 @@ def twoPlayers():
 						placePiece(board, row, col, 1)
 
 						if isWinningMove(board, 1):
-							label = myfont.render("Player 1 wins!", 1, GREEN)
+							label = playerWinsFont.render("Player 1 wins!", 1, GREEN)
 							screen.blit(label, (200,10))
 							gameOver = True
 
@@ -164,8 +165,8 @@ def twoPlayers():
 						placePiece(board, row, col, 2)
 
 						if isWinningMove(board, 2):
-							label = myfont.render("Player 2 wins!", 1, MAGENTA)
-							screen.blit(label, (40,10))
+							label = playerWinsFont.render("Player 2 wins!", 1, MAGENTA)
+							screen.blit(label, (200,10))
 							gameOver = True
 
 				printBoard(board)
