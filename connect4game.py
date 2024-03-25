@@ -2,6 +2,7 @@ import numpy as np
 import pygame
 import sys
 import math
+from button import Button
 
 GREY = (127, 127, 127)
 BLACK = (0,0,0)
@@ -77,6 +78,24 @@ def drawBoard(board):
 	pygame.display.update()
 
 def mainMenu(): #Fill in
+	while True:
+		screen.blit(background, (-100, 0))
+		MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+		label = myfont.render("Connect Four", 1, MAGENTA)
+		screen.blit(label, (40,10))
+	
+		TWO_PLAYERS_BUTTON = Button(image=pygame.image.load("imageAssets/2players.png"), pos =(350, 350))
+        
+		PLAY_AI_BUTTON = Button(image=pygame.image.load("imageAssets/playAI.png"), pos=(350, 485))
+        
+		QUIT_BUTTON = Button(image=pygame.image.load("imageAssets/quit.png"), pos=(350, 620))
+
+		for button in [TWO_PLAYERS_BUTTON, PLAY_AI_BUTTON, QUIT_BUTTON]:
+			button.update(screen)
+
+		pygame.time.wait(2000)
+		return 0
 	#Connect 4 header
 	#2 buttons, one "1 player", second "2 player"
 	#one small quit button
@@ -86,17 +105,20 @@ def mainMenu(): #Fill in
 		#begin 2-player game
 	#if chosen quit button
 		#pygame.time.wait(3000)
-	return 0
+	
 
 def twoPlayers():
-	#fill in
-	return 0
+	while True:
+		# call function to play normal game
+		return 0
 
 def playAI():
-	#fill in
-	return 0
+	while True:
+		# call function to play AI game
+		return 0
 
 
+# pygame.init()
 board = createBoard()
 printBoard(board)
 gameOver = False
@@ -117,8 +139,11 @@ screen = pygame.display.set_mode(size)
 drawBoard(board)
 pygame.display.update()
 
-print(pygame.font.get_fonts())
+background = pygame.image.load("imageAssets/background.png")
+
 myfont = pygame.font.SysFont("applechancery", 50)
+
+mainMenu()
 
 while not gameOver:
 
