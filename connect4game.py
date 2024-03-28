@@ -3,6 +3,7 @@ import numpy as np
 import pygame
 import sys
 import math
+from pygame import mixer
 from button import Button
 from connect4AI import minimax
 from sharedFunctions import PLAYER_PIECE, AI_PIECE, ROW_COUNT, COLUMN_COUNT, isValidLocation, getNextOpenRow, isWinningMove, placePiece
@@ -18,9 +19,13 @@ height = (ROW_COUNT+1) * SQUARESIZE
 RADIUS = int(SQUARESIZE/2 - 5)
 size = (width, height)
 pygame.init()
+mixer.init()
 myfont = pygame.font.SysFont("applechancery", 70)
 playerWinsFont = pygame.font.SysFont("applechancery", 50)
 screen = pygame.display.set_mode(size)
+pygame.mixer.music.load("star-travelers.mp3")
+pygame.mixer.music.set_volume(0.5)  # Adjust volume as needed (0.0 to 1.0)
+pygame.mixer.music.play(-1)  # -1 indicates loop indefinitely
 
 def createBoard():
 	board = np.zeros((ROW_COUNT,COLUMN_COUNT))
@@ -192,7 +197,7 @@ def playAI():
 
 					if isWinningMove(board, AI_PIECE):
 						label = playerWinsFont.render("AI wins!", 1, MAGENTA)
-						screen.blit(label, (200,10))
+						screen.blit(label, (250,10))
 						gameOver = True
 
 					printBoard(board)
