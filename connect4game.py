@@ -1,16 +1,17 @@
+import random
 import numpy as np
 import pygame
 import sys
 import math
 from button import Button
+from connect4AI import minimax
+from sharedFunctions import PLAYER_PIECE, AI_PIECE, ROW_COUNT, COLUMN_COUNT, isValidLocation, getNextOpenRow, isWinningMove, placePiece
 
-GREY = (127, 127, 127)
-BLACK = (0,0,0)
-GREEN = (0,255,0)
-MAGENTA = (255,0,255)
+GREY = (127, 127, 127) 
+BLACK = (0,0,0) 
+GREEN = (0,255,0) 
+MAGENTA = (255,0,255) 
 
-ROW_COUNT = 6
-COLUMN_COUNT = 7
 SQUARESIZE = 100
 width = COLUMN_COUNT * SQUARESIZE
 height = (ROW_COUNT+1) * SQUARESIZE
@@ -25,51 +26,8 @@ def createBoard():
 	board = np.zeros((ROW_COUNT,COLUMN_COUNT))
 	return board
 
-def placePiece(board, row, col, piece):
-	board[row][col] = piece
-
-def isValidLocation(board, col):
-	return board[ROW_COUNT-1][col] == 0
-
-def getNextOpenRow(board, col):
-	for r in range(ROW_COUNT):
-		if board[r][col] == 0:
-			return r
-		
-def isVerticalWin(board, piece):
-	# Check vertical locations for win
-	for c in range(COLUMN_COUNT):
-		for r in range(ROW_COUNT-3):
-			if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
-				return True
-
-def isHorizontalWin(board, piece):
-	# Check horizontal locations for win
-	for c in range(COLUMN_COUNT-3):
-		for r in range(ROW_COUNT):
-			if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-				return True
-			
-def isDiagonalWin(board, piece):			
-	# Check left to right diagonals
-	for c in range(COLUMN_COUNT-3):
-		for r in range(ROW_COUNT-3):
-			if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
-				return True
-	# Check right to left diagonals
-	for c in range(COLUMN_COUNT-3):
-		for r in range(3, ROW_COUNT):
-			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
-				return True
-			
 def printBoard(board):
 	print(np.flip(board, 0))
-
-def isWinningMove(board, piece):
-	if isVerticalWin(board, piece) or isHorizontalWin(board, piece) or isDiagonalWin(board, piece):
-		return True
-	else:
-		return False
 
 def drawBoard(board):
 	for c in range(COLUMN_COUNT):
@@ -121,8 +79,8 @@ def mainMenu():
 def twoPlayers():
 	board = createBoard()
 	printBoard(board)
-	gameOver = False
 	turn = 0
+	gameOver = False
 	drawBoard(board)
 	pygame.display.update()
 
@@ -181,7 +139,69 @@ def twoPlayers():
 					
 def playAI():
 	while True:
-		# call function to play AI game
-		return 0
+		PLAYER = 0
+		AI = 1
+		gameOver = False
+
+		board = createBoard()
+		printBoard(board)
+		drawBoard(board)
+		pygame.display.update()
+
+		turn = random.randint(PLAYER, AI)
+		while not gameOver:
+			for event in pygame.event.get():
+
+				if event.type == pygame.MOUSEMOTION:
+					pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+					posx = event.pos[0]
+					if turn == PLAYER:
+						pygame.draw.circle(screen, GREEN, (posx, int(SQUARESIZE/2)), RADIUS)
+
+				pygame.display.update()
+
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+					# Ask for Player 1 Input
+					if turn == PLAYER:
+						posx = event.pos[0]
+						col = int(math.floor(posx/SQUARESIZE))
+
+						if isValidLocation(board, col):
+							row = getNextOpenRow(board, col)
+							placePiece(board, row, col, PLAYER_PIECE)
+
+							if isWinningMove(board, PLAYER_PIECE):
+								label = playerWinsFont.render("Player 1 wins!", 1, GREEN)
+								screen.blit(label, (200,10))
+								gameOver = True
+
+							turn += 1
+							turn = turn % 2
+
+							printBoard(board)
+							drawBoard(board)
+
+			# Ask for Player 2 Input
+			if turn == AI and not gameOver:				
+				col, minimaxScore = minimax(board, 5, -math.inf, math.inf, True)
+
+				if isValidLocation(board, col):
+					row = getNextOpenRow(board, col)
+					placePiece(board, row, col, AI_PIECE)
+
+					if isWinningMove(board, AI_PIECE):
+						label = playerWinsFont.render("AI wins!", 1, MAGENTA)
+						screen.blit(label, (200,10))
+						gameOver = True
+
+					printBoard(board)
+					drawBoard(board)
+					turn += 1
+					turn = turn % 2
+
+			if gameOver:
+				pygame.time.wait(3000)
+				mainMenu()
 
 mainMenu()
