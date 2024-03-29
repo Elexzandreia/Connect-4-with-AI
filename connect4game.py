@@ -20,8 +20,7 @@ RADIUS = int(SQUARESIZE/2 - 5)
 size = (width, height)
 pygame.init()
 mixer.init()
-myfont = pygame.font.SysFont("applechancery", 70)
-playerWinsFont = pygame.font.SysFont("applechancery", 50)
+playerWinsFont = pygame.font.SysFont("phosphate", 50)
 screen = pygame.display.set_mode(size)
 pygame.mixer.music.load("star-travelers.mp3")
 pygame.mixer.music.set_volume(0.5)  # Adjust volume as needed (0.0 to 1.0)
@@ -53,13 +52,10 @@ def mainMenu():
 		background = pygame.image.load("imageAssets/background.png")
 		screen.blit(background, (0, 0))
 		MENU_MOUSE_POS = pygame.mouse.get_pos()
-
-		label = myfont.render("Connect Four", 1, MAGENTA)
-		screen.blit(label, (150,70))
 	
-		TWO_PLAYERS_BUTTON = Button(image=pygame.image.load("imageAssets/2players.png"), pos =(350, 350))
+		TWO_PLAYERS_BUTTON = Button(image=pygame.image.load("imageAssets/2players.png"), pos =(350, 370))
         
-		PLAY_AI_BUTTON = Button(image=pygame.image.load("imageAssets/playAI.png"), pos=(350, 485))
+		PLAY_AI_BUTTON = Button(image=pygame.image.load("imageAssets/playAI.png"), pos=(350, 495))
         
 		QUIT_BUTTON = Button(image=pygame.image.load("imageAssets/quit.png"), pos=(350, 620))
 
@@ -116,7 +112,7 @@ def twoPlayers():
 
 						if isWinningMove(board, 1):
 							label = playerWinsFont.render("Player 1 wins!", 1, GREEN)
-							screen.blit(label, (200,10))
+							screen.blit(label, (190,10))
 							gameOver = True
 
 				else:	# Get player 2 Input
@@ -129,7 +125,7 @@ def twoPlayers():
 
 						if isWinningMove(board, 2):
 							label = playerWinsFont.render("Player 2 wins!", 1, MAGENTA)
-							screen.blit(label, (200,10))
+							screen.blit(label, (190,10))
 							gameOver = True
 
 				printBoard(board)
