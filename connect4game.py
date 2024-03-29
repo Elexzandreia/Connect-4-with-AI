@@ -9,7 +9,7 @@ from connect4AI import minimax
 from sharedFunctions import PLAYER_PIECE, AI_PIECE, ROW_COUNT, COLUMN_COUNT, isValidLocation, getNextOpenRow, isWinningMove, placePiece
 
 GREY = (127, 127, 127) 
-BLACK = (0,0,0) 
+BLACK = (0,0,0)
 GREEN = (0,255,0) 
 MAGENTA = (255,0,255) 
 
